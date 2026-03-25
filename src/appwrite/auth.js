@@ -22,7 +22,8 @@ export class AuthService {
                 name: name
             });
             if (userAccount) {
-                this.login({ email, password });
+                await this.login({ email, password });
+                return userAccount;
             } else {
                 throw new Error("Unable to create account");
             }
@@ -55,12 +56,14 @@ export class AuthService {
     // Get the currently logged in user. 
     async getCurrentUser() {
         try {
-            const user = await this.account.get();
-            return user;
+            return await this.account.get();
         } catch (err) {
-            console.log("Appwrite service :: getCurrentUser :: error", err);
+            // Only log unexpected errors
+            if (err.code !== 401) {
+                console.log("Unexpected error:", err);
+            }
+            return null;
         }
-        return null;
     }
 }
 

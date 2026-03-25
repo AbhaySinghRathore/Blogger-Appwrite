@@ -1,4 +1,4 @@
-import conf from "../conf/conf";
+import conf from "../conf/conf.js";
 import { Client, ID, Databases, Query, Storage } from "appwrite";
 
 export class DBStorageService {
@@ -81,18 +81,18 @@ export class DBStorageService {
         }
     }
 
-    async getAllPosts() {
+    async getPosts() {
         try {
             const result = await this.databases.listDocuments({
                 databaseId: conf.appwriteDatabaseId,
                 collectionId: conf.appwriteTableId,
                 queries: [
-                    Query.equal('status', 'active')
+                    Query.equal("status", "active")
                 ]
             });
             return result;
         } catch (err) {
-            console.log("Appwrite service :: getAllPosts :: error", err);
+            console.log("Appwrite service :: getPosts :: error", err);
             return false;
         }
     }
@@ -101,15 +101,14 @@ export class DBStorageService {
     // File storage methods
     async uploadFile(file) {
         try {
-            await this.bucket.createFile({
+            return await this.bucket.createFile({
                 bucketId: conf.appwriteBucketId,
                 fileId: ID.unique(),
                 file: file
             })
-            return true;
         } catch (err) {
             console.log("Appwrite service :: uploadFile :: error", err);
-            return false;
+            return null;
         }
     }
 
@@ -127,14 +126,13 @@ export class DBStorageService {
 
     getFilePreview(fileId) {
         try {
-            const result = this.bucket.getFilePreview({
+            return this.bucket.getFileView({
                 bucketId: conf.appwriteBucketId,
                 fileId: fileId
-            })
-            return result;
+            });
         } catch (err) {
             console.log("Appwrite service :: getFilePreview :: error", err);
-            return false;
+            return "";
         }
     }
 
